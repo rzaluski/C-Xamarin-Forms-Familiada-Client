@@ -26,14 +26,16 @@ namespace FamiliadaClientForms
         {
             var entry = (Entry)sender;
             if (Type == null || entry.Text == null) return;
+            string text = entry.Text;
             string regex = "";
             if(Type == "Digits") regex = @"[^0-9]";
             if (Type == "DigitsAndDot")
             {
-                regex = @"[^0-9.,1]";
-                entry.Text = Regex.Replace(entry.Text, ",", ".");
+                regex = @"[^0-9.,]";
+                text = Regex.Replace(text, ",", ".");
             }
-            entry.Text = Regex.Replace(entry.Text, regex, string.Empty);
+            text = Regex.Replace(text, regex, string.Empty);
+            entry.Text = text;
         }
     }
 }
