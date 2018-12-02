@@ -13,31 +13,7 @@ namespace FamiliadaClientForms
 		public MainPage()
 		{
 			InitializeComponent();
-            this.BindingContext = new ConnectPageViewModel(this.Navigation);
+            this.BindingContext = new ConnectPageViewModel(this, this.Navigation);
         }
-
-        private void ButtonConnect_Clicked(object sender, EventArgs e)
-        {
-            Connect();
-        }
-
-        private void Connect()
-        {
-            //try
-            //{
-            //    string IP = FindViewById<EditText>(Resource.Id.editTextIP).Text;
-            //    if (!int.TryParse(FindViewById<EditText>(Resource.Id.editTextPort).Text, out int port)) throw new Exception("Port musi być liczbą");
-
-            //    TcpClient tcpclnt = new TcpClient();
-            //    tcpclnt.Connect(IP, port);
-            //    tcpclnt.Close();
-            //}
-
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine("Error..... " + e.StackTrace);
-            //}
-        }
-
     }
 }

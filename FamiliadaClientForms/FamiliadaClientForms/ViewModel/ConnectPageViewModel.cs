@@ -13,12 +13,14 @@ namespace FamiliadaClientForms
     class ConnectPageViewModel :INotifyPropertyChanged
     {
         ConnectionDetails _connectionDetails = new ConnectionDetails();
+        private Page _page;
         private INavigation _navigation;
 
-        public ConnectPageViewModel(INavigation navigation)
+        public ConnectPageViewModel(Page page, INavigation navigation)
         {
+            _page = page;
             _navigation = navigation;
-            IP = "192.168.0.25";
+            IP = "192.168.1.111";
             Port = "6969";
             Connect = new Command(OnConnect);
         }
@@ -62,12 +64,13 @@ namespace FamiliadaClientForms
 
                 TcpClient tcpClient = new TcpClient();
                 tcpClient.Connect(IP, port);
-                _navigation.PushAsync(new ControlPanelPage(tcpClient));
-                tcpClient.Close();
+                _navigation.PushModalAsync(new ControlPanelPage(tcpClient));
+                //tcpClient.Close();
             }
 
             catch (Exception e)
             {
+                _page.DisplayAlert("Error", e.Message, "OK");
                 Console.WriteLine("Error..... " + e.StackTrace);
             }
         }

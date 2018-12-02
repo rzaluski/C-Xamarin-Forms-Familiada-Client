@@ -18,12 +18,12 @@ namespace FamiliadaClientForms.View
 		public ControlPanelPage (TcpClient tcpClient)
 		{
 			InitializeComponent ();
-            this.BindingContext = new ControlPanelPageViewModel(tcpClient);
-            List<Answer> answers = new List<Answer>();
-            answers.Add(new Answer("1", 1));
-            answers.Add(new Answer("2", 1));
-            answers.Add(new Answer("3", 1));
-            listViewAnswers.ItemsSource = answers;
+            this.BindingContext = new ControlPanelPageViewModel(this, tcpClient);
+            //List<Answer> answers = new List<Answer>();
+            //answers.Add(new Answer("1", 1));
+            //answers.Add(new Answer("2", 1));
+            //answers.Add(new Answer("3", 1));
+            //listViewAnswers.ItemsSource = answers;
 		}
 	}
 }

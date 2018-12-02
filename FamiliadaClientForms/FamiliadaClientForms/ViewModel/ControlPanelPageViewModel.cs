@@ -11,8 +11,10 @@ namespace FamiliadaClientForms.ViewModel
     class ControlPanelPageViewModel
     {
         private TcpClient _tcpClient;
-        public ControlPanelPageViewModel(TcpClient tcpClient)
+        private Page _page;
+        public ControlPanelPageViewModel(Page page, TcpClient tcpClient)
         {
+            _page = page;
             _tcpClient = tcpClient;
             RandQuestion = new Command(OnRandQuestion);
         }
@@ -23,8 +25,7 @@ namespace FamiliadaClientForms.ViewModel
             Stream stream = _tcpClient.GetStream();
             ASCIIEncoding asen = new ASCIIEncoding();
             TableCommand tableCommand = new TableCommand("RandQuestion");
-            JMessage msg = JMessage.FromValue<TableCommand>(tableCommand);
-            string msgString = JMessage.Serialize(msg);
+            string msgString = JMessage.CreateMessage("TableCommand", tableCommand);
             byte[] b = asen.GetBytes(msgString);
             stream.Write(b, 0, b.Length);
         }

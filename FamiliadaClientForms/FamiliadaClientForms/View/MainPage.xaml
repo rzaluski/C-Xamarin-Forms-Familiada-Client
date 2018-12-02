@@ -21,7 +21,7 @@
                 </Entry.Behaviors>
             </Entry>
         </StackLayout>
-        <Button Text="Połącz" Command="{Binding Connect}" x:Name="buttonConnect" Clicked="ButtonConnect_Clicked"/>
+        <Button Text="Połącz" Command="{Binding Connect}"/>
     </StackLayout>
 
 </ContentPage>
