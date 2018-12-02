@@ -16,6 +16,11 @@ namespace FamiliadaClientForms
             return Newtonsoft.Json.JsonConvert.SerializeObject(jMessage);
         }
 
+        public static JMessage Deserialize(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<JMessage>(data);
+        }
+
         public static T Deserialize<T>(string data)
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(data);
