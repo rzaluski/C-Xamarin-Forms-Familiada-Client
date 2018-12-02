@@ -4,7 +4,7 @@
              x:Class="FamiliadaClientForms.View.ControlPanelPage">
     <ContentPage.Content>
         <StackLayout Orientation="Vertical">
-            <Button Text="Losuj pytanie"/>
+            <Button Text="Losuj pytanie" Command="{Binding RandQuestion}"/>
             <ListView x:Name="listViewAnswers">
                 <ListView.ItemTemplate>
                     <DataTemplate>

@@ -12,7 +12,7 @@ namespace FamiliadaClientForms
 		{
 			InitializeComponent();
 
-			MainPage = new ControlPanelPage();
+			MainPage = new MainPage();
 		}
 
 		protected override void OnStart ()

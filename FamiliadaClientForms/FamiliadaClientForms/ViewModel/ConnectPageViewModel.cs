@@ -1,4 +1,5 @@
 ﻿using FamiliadaClientForms.Model;
+using FamiliadaClientForms.View;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,9 +13,11 @@ namespace FamiliadaClientForms
     class ConnectPageViewModel :INotifyPropertyChanged
     {
         ConnectionDetails _connectionDetails = new ConnectionDetails();
+        private INavigation _navigation;
 
-        public ConnectPageViewModel()
+        public ConnectPageViewModel(INavigation navigation)
         {
+            _navigation = navigation;
             IP = "192.168.0.25";
             Port = "6969";
             Connect = new Command(OnConnect);
@@ -57,9 +60,10 @@ namespace FamiliadaClientForms
             {
                 if (!int.TryParse(Port, out int port)) throw new Exception("Nieprawidłowy format portu");
 
-                TcpClient tcpclnt = new TcpClient();
-                tcpclnt.Connect(IP, port);
-                tcpclnt.Close();
+                TcpClient tcpClient = new TcpClient();
+                tcpClient.Connect(IP, port);
+                _navigation.PushAsync(new ControlPanelPage(tcpClient));
+                tcpClient.Close();
             }
 
             catch (Exception e)

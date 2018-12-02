@@ -13,7 +13,7 @@ namespace FamiliadaClientForms
 		public MainPage()
 		{
 			InitializeComponent();
-            this.BindingContext = new ConnectPageViewModel();
+            this.BindingContext = new ConnectPageViewModel(this.Navigation);
         }
 
         private void ButtonConnect_Clicked(object sender, EventArgs e)
