@@ -19,11 +19,11 @@ namespace FamiliadaClientForms.View
 		{
 			InitializeComponent ();
             this.BindingContext = new ControlPanelPageViewModel(this, tcpClient);
-            List<Answer> answers = new List<Answer>();
-            answers.Add(new Answer("1", 1));
-            answers.Add(new Answer("2", 1));
-            answers.Add(new Answer("3", 1));
-            listViewAnswers.ItemsSource = answers;
+            //List<Answer> answers = new List<Answer>();
+            //answers.Add(new Answer("1", 1));
+            //answers.Add(new Answer("2", 1));
+            //answers.Add(new Answer("3", 1));
+            //listViewAnswers.ItemsSource = answers;
         }
 	}
 }

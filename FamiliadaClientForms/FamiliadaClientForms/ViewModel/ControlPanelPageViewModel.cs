@@ -10,7 +10,7 @@ using Xamarin.Forms;
 
 namespace FamiliadaClientForms.ViewModel
 {
-    class ControlPanelPageViewModel
+    class ControlPanelPageViewModel :INotifyPropertyChanged
     {
         private TcpClient _tcpClient;
         private Page _page;
@@ -20,7 +20,8 @@ namespace FamiliadaClientForms.ViewModel
         {
             _page = page;
             _tcpClient = tcpClient;
-            RandQuestion = new Command(OnRandQuestion);
+            RandQuestionCommand = new Command(OnRandQuestion);
+            AnswerCommand = new Command<string>(OnAnswer);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -44,7 +45,7 @@ namespace FamiliadaClientForms.ViewModel
             }
         }
 
-        public ICommand RandQuestion { get; set; }
+        public ICommand RandQuestionCommand { get; set; }
         void OnRandQuestion()
         {
             Stream stream = _tcpClient.GetStream();
@@ -55,9 +56,20 @@ namespace FamiliadaClientForms.ViewModel
 
             byte[] bb = new byte[1000];
             int k = stream.Read(bb, 0, 1000);
-            msgString = System.Text.Encoding.ASCII.GetString(b, 0, k);
+            msgString = System.Text.Encoding.ASCII.GetString(bb, 0, k);
             JMessage msg = JMessage.Deserialize(msgString);
             CurrentQuestion = JMessage.Deserialize<Question>(msg.ObjectJson);
+        }
+
+        public ICommand AnswerCommand { get; set; }
+        void OnAnswer(string answerText)
+        {
+            int index = CurrentQuestion.Answers.FindIndex(answer => answer.AnswerText == answerText);
+            Stream stream = _tcpClient.GetStream();
+            ASCIIEncoding asen = new ASCIIEncoding();
+            string msgString = JMessage.CreateMessage("Answer", index);
+            byte[] b = asen.GetBytes(msgString);
+            stream.Write(b, 0, b.Length);
         }
     }
 }

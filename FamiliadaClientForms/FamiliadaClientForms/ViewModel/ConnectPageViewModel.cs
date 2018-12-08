@@ -15,7 +15,6 @@ namespace FamiliadaClientForms
         ConnectionDetails _connectionDetails = new ConnectionDetails();
         private Page _page;
         private INavigation _navigation;
-
         public ConnectPageViewModel(Page page, INavigation navigation)
         {
             _page = page;
