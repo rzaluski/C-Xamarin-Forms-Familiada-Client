@@ -11,7 +11,7 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <Button Text="{Binding AnswerText}" Command="{Binding Path=BindingContext.AnswerCommand, Source={x:Reference Name=listViewAnswers}}" CommandParameter="{Binding AnswerText}"/>
+                            <Button x:Name="answerButton" Text="{Binding AnswerText}" Command="{Binding Path=BindingContext.AnswerCommand, Source={x:Reference Name=listViewAnswers}}" CommandParameter="{x:Reference answerButton}"/>
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>

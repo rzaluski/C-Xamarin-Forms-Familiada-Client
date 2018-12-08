@@ -21,7 +21,7 @@ namespace FamiliadaClientForms.ViewModel
             _page = page;
             _tcpClient = tcpClient;
             RandQuestionCommand = new Command(OnRandQuestion);
-            AnswerCommand = new Command<string>(OnAnswer);
+            AnswerCommand = new Command<Button>(OnAnswer);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -62,12 +62,13 @@ namespace FamiliadaClientForms.ViewModel
         }
 
         public ICommand AnswerCommand { get; set; }
-        void OnAnswer(string answerText)
+        void OnAnswer(Button button)
         {
-            int index = CurrentQuestion.Answers.FindIndex(answer => answer.AnswerText == answerText);
+            Answer answer = button.BindingContext as Answer;
+            CurrentQuestion.Answers.Remove(answer);
             Stream stream = _tcpClient.GetStream();
             ASCIIEncoding asen = new ASCIIEncoding();
-            string msgString = JMessage.CreateMessage("Answer", index);
+            string msgString = JMessage.CreateMessage("Answer", answer);
             byte[] b = asen.GetBytes(msgString);
             stream.Write(b, 0, b.Length);
         }

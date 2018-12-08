@@ -10,7 +10,7 @@ namespace Server
     {
         public string AnswerText { get; set; }
         public int Points { get; set; }
-
+        public bool IsVisible { get; set; } = true;
         public Answer(string _AnswerText, int _Points)
         {
             AnswerText = _AnswerText;
