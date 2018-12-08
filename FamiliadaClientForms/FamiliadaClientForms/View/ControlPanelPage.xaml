@@ -7,6 +7,7 @@
         <StackLayout Orientation="Vertical">
             <Button Text="Losuj pytanie" Command="{Binding RandQuestionCommand}"/>
             <Label Text="{Binding CurrentQuestion.QuestionText}"/>
+            <Button Text="Zła odpowiedź" Command="{Binding IncorrectAnswerCommand}" IsEnabled="{Binding IsGameOn}"/>
             <ListView x:Name="listViewAnswers" ItemsSource="{Binding CurrentQuestion.Answers}">
                 <ListView.ItemTemplate>
                     <DataTemplate>

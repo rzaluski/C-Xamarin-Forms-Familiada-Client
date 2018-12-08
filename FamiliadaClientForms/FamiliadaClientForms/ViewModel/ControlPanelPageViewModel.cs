@@ -15,13 +15,14 @@ namespace FamiliadaClientForms.ViewModel
         private TcpClient _tcpClient;
         private Page _page;
         private Question _currentQuestion { get; set; }
-
+        private bool _isGameOn;
         public ControlPanelPageViewModel(Page page, TcpClient tcpClient)
         {
             _page = page;
             _tcpClient = tcpClient;
             RandQuestionCommand = new Command(OnRandQuestion);
             AnswerCommand = new Command<Button>(OnAnswer);
+            IncorrectAnswerCommand = new Command(OnIncorrectAnswer);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -42,6 +43,16 @@ namespace FamiliadaClientForms.ViewModel
             {
                 _currentQuestion = value;
                 OnPropertyChanged("CurrentQuestion");
+            }
+        }
+
+        public bool IsGameOn
+        {
+            get { return _isGameOn; }
+            set
+            {
+                _isGameOn = value;
+                OnPropertyChanged("IsGameOn");
             }
         }
 
@@ -68,9 +79,31 @@ namespace FamiliadaClientForms.ViewModel
             CurrentQuestion.Answers.Remove(answer);
             Stream stream = _tcpClient.GetStream();
             ASCIIEncoding asen = new ASCIIEncoding();
-            string msgString = JMessage.CreateMessage("Answer", answer);
+            string msgString = JMessage.CreateMessage("CorrectAnswer", answer);
             byte[] b = asen.GetBytes(msgString);
             stream.Write(b, 0, b.Length);
+
+            byte[] bb = new byte[1000];
+            int k = stream.Read(bb, 0, 1000);
+            msgString = System.Text.Encoding.ASCII.GetString(bb, 0, k);
+            JMessage msg = JMessage.Deserialize(msgString);
+            IsGameOn = JMessage.Deserialize<bool>(msg.ObjectJson);
+        }
+
+        public ICommand IncorrectAnswerCommand { get; set; }
+        void OnIncorrectAnswer()
+        {
+            Stream stream = _tcpClient.GetStream();
+            ASCIIEncoding asen = new ASCIIEncoding();
+            string msgString = JMessage.CreateMessage("IncorrectAnswer", null);
+            byte[] b = asen.GetBytes(msgString);
+            stream.Write(b, 0, b.Length);
+
+            byte[] bb = new byte[1000];
+            int k = stream.Read(bb, 0, 1000);
+            msgString = System.Text.Encoding.ASCII.GetString(bb, 0, k);
+            JMessage msg = JMessage.Deserialize(msgString);
+            IsGameOn = JMessage.Deserialize<bool>(msg.ObjectJson);
         }
     }
 }
