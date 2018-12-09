@@ -21,7 +21,7 @@ namespace FamiliadaClientForms
             _navigation = navigation;
             IP = "192.168.1.111";
             Port = "6969";
-            Connect = new Command(OnConnect);
+            ConnectCommand = new Command(OnConnect);
         }
         public string IP
         {
@@ -54,7 +54,7 @@ namespace FamiliadaClientForms
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-        public ICommand Connect { get; set; }
+        public ICommand ConnectCommand { get; set; }
         private void OnConnect()
         {
             try

@@ -1,6 +1,7 @@
 ﻿using Server;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Net.Sockets;
@@ -15,14 +16,22 @@ namespace FamiliadaClientForms.ViewModel
         private TcpClient _tcpClient;
         private Page _page;
         private Question _currentQuestion { get; set; }
-        private bool _isGameOn;
+        private bool _isRoundOn;
+        private bool _isQuestionSubmitted;
+        private bool _isFirstTeamPicked;
+        private ObservableCollection<Team> Teams = new ObservableCollection<Team>();
+        private Team _selectedTeam;
         public ControlPanelPageViewModel(Page page, TcpClient tcpClient)
         {
             _page = page;
             _tcpClient = tcpClient;
             RandQuestionCommand = new Command(OnRandQuestion);
             AnswerCommand = new Command<Button>(OnAnswer);
+            SubmitQuestionCommand = new Command(OnSubmitQuestion);
             IncorrectAnswerCommand = new Command(OnIncorrectAnswer);
+            Teams.Add(new Team("Drużyna Lewa", 0));
+            Teams.Add(new Team("Drużyna Prawa", 1));
+            IsQuestionSubmitted = false;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -46,13 +55,43 @@ namespace FamiliadaClientForms.ViewModel
             }
         }
 
-        public bool IsGameOn
+        public Team SelectedTeam
         {
-            get { return _isGameOn; }
+            get { return _selectedTeam; }
             set
             {
-                _isGameOn = value;
+                _selectedTeam = value;
+                OnPropertyChanged("SelectedTeam");
+            }
+        }
+
+        public bool IsRoundOn
+        {
+            get { return _isRoundOn; }
+            set
+            {
+                _isRoundOn = value;
                 OnPropertyChanged("IsGameOn");
+            }
+        }
+
+        public bool IsQuestionSubmitted
+        {
+            get { return _isQuestionSubmitted; }
+            set
+            {
+                _isQuestionSubmitted = value;
+                OnPropertyChanged("IsQuestionSubmitted");
+            }
+        }
+
+        public bool IsFirstTeamPicked
+        {
+            get { return !_isFirstTeamPicked && IsQuestionSubmitted; }
+            set
+            {
+                _isFirstTeamPicked = value;
+                OnPropertyChanged("IsFirstTeamPicked");
             }
         }
 
@@ -72,10 +111,10 @@ namespace FamiliadaClientForms.ViewModel
             CurrentQuestion.Answers.Remove(answer);
             SendMessage("CorrectAnswer", answer);
 
-            if(!IsGameOn)
+            if(!IsRoundOn)
             {
                 JMessage msg = ReadMessage();
-                IsGameOn = JMessage.Deserialize<bool>(msg.ObjectJson);
+                IsRoundOn = JMessage.Deserialize<bool>(msg.ObjectJson);
             }
         }
 
@@ -85,7 +124,13 @@ namespace FamiliadaClientForms.ViewModel
             SendMessage("IncorrectAnswer", null);
 
             JMessage msg = ReadMessage();
-            IsGameOn = JMessage.Deserialize<bool>(msg.ObjectJson);
+            IsRoundOn = JMessage.Deserialize<bool>(msg.ObjectJson);
+        }
+
+        public ICommand SubmitQuestionCommand { get; set; }
+        void OnSubmitQuestion()
+        {
+            SendMessage("SubmitQuestion", null);
         }
 
         private void SendMessage(string header, Object obj)
@@ -105,5 +150,15 @@ namespace FamiliadaClientForms.ViewModel
             string msgString = System.Text.Encoding.ASCII.GetString(bb, 0, k);
             return JMessage.Deserialize(msgString);
         }
+
+        //public ObservableCollection<Team> Teams
+        //{
+        //    get { return _teams; }
+        //    set
+        //    {
+        //        _teams = value;
+        //        OnPropertyChanged("Teams");
+        //    }
+        //}
     }
 }
