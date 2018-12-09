@@ -59,16 +59,9 @@ namespace FamiliadaClientForms.ViewModel
         public ICommand RandQuestionCommand { get; set; }
         void OnRandQuestion()
         {
-            Stream stream = _tcpClient.GetStream();
-            ASCIIEncoding asen = new ASCIIEncoding();
-            string msgString = JMessage.CreateMessage("RandQuestion", null);
-            byte[] b = asen.GetBytes(msgString);
-            stream.Write(b, 0, b.Length);
+            SendMessage("RandQuestion", null);
 
-            byte[] bb = new byte[1000];
-            int k = stream.Read(bb, 0, 1000);
-            msgString = System.Text.Encoding.ASCII.GetString(bb, 0, k);
-            JMessage msg = JMessage.Deserialize(msgString);
+            JMessage msg = ReadMessage();
             CurrentQuestion = JMessage.Deserialize<Question>(msg.ObjectJson);
         }
 
@@ -77,33 +70,40 @@ namespace FamiliadaClientForms.ViewModel
         {
             Answer answer = button.BindingContext as Answer;
             CurrentQuestion.Answers.Remove(answer);
-            Stream stream = _tcpClient.GetStream();
-            ASCIIEncoding asen = new ASCIIEncoding();
-            string msgString = JMessage.CreateMessage("CorrectAnswer", answer);
-            byte[] b = asen.GetBytes(msgString);
-            stream.Write(b, 0, b.Length);
+            SendMessage("CorrectAnswer", answer);
 
-            byte[] bb = new byte[1000];
-            int k = stream.Read(bb, 0, 1000);
-            msgString = System.Text.Encoding.ASCII.GetString(bb, 0, k);
-            JMessage msg = JMessage.Deserialize(msgString);
-            IsGameOn = JMessage.Deserialize<bool>(msg.ObjectJson);
+            if(!IsGameOn)
+            {
+                JMessage msg = ReadMessage();
+                IsGameOn = JMessage.Deserialize<bool>(msg.ObjectJson);
+            }
         }
 
         public ICommand IncorrectAnswerCommand { get; set; }
         void OnIncorrectAnswer()
         {
+            SendMessage("IncorrectAnswer", null);
+
+            JMessage msg = ReadMessage();
+            IsGameOn = JMessage.Deserialize<bool>(msg.ObjectJson);
+        }
+
+        private void SendMessage(string header, Object obj)
+        {
             Stream stream = _tcpClient.GetStream();
             ASCIIEncoding asen = new ASCIIEncoding();
-            string msgString = JMessage.CreateMessage("IncorrectAnswer", null);
+            string msgString = JMessage.CreateMessage(header, obj);
             byte[] b = asen.GetBytes(msgString);
             stream.Write(b, 0, b.Length);
+        }
 
+        private JMessage ReadMessage()
+        {
+            Stream stream = _tcpClient.GetStream();
             byte[] bb = new byte[1000];
             int k = stream.Read(bb, 0, 1000);
-            msgString = System.Text.Encoding.ASCII.GetString(bb, 0, k);
-            JMessage msg = JMessage.Deserialize(msgString);
-            IsGameOn = JMessage.Deserialize<bool>(msg.ObjectJson);
+            string msgString = System.Text.Encoding.ASCII.GetString(bb, 0, k);
+            return JMessage.Deserialize(msgString);
         }
     }
 }
