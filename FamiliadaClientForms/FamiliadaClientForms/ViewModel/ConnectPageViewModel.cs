@@ -19,7 +19,7 @@ namespace FamiliadaClientForms
         {
             _page = page;
             _navigation = navigation;
-            IP = "192.168.1.111";
+            IP = "192.168.1.102";
             Port = "6969";
             ConnectCommand = new Command(OnConnect);
         }
