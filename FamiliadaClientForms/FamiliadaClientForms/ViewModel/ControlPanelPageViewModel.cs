@@ -19,6 +19,8 @@ namespace FamiliadaClientForms.ViewModel
         private bool _isRoundOn;
         private bool _isQuestionSubmitted;
         private bool _isFirstTeamPicked;
+        private bool _showRandQuestion;
+        private bool _showSubmitQuestion;
         private ObservableCollection<Team> _teams = new ObservableCollection<Team>();
         private Team _selectedTeam;
         public ControlPanelPageViewModel(Page page, TcpClient tcpClient)
@@ -33,6 +35,8 @@ namespace FamiliadaClientForms.ViewModel
             Teams.Add(new Team("Drużyna Prawa", 1));
             IsQuestionSubmitted = false;
             IsFirstTeamPicked = false;
+            ShowRandQuestion = true;
+            ShowSubmitQuestion = false;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -103,6 +107,26 @@ namespace FamiliadaClientForms.ViewModel
             get { return !IsFirstTeamPicked && IsQuestionSubmitted; }
         }
 
+        public bool ShowRandQuestion
+        {
+            get { return _showRandQuestion; }
+            set
+            {
+                _showRandQuestion = value;
+                OnPropertyChanged("ShowRandQuestion");
+            }
+        }
+
+        public bool ShowSubmitQuestion
+        {
+            get { return _showSubmitQuestion; }
+            set
+            {
+                _showSubmitQuestion = value;
+                OnPropertyChanged("ShowSubmitQuestion");
+            }
+        }
+
         public ICommand RandQuestionCommand { get; set; }
         void OnRandQuestion()
         {
@@ -110,6 +134,7 @@ namespace FamiliadaClientForms.ViewModel
 
             JMessage msg = ReadMessage();
             CurrentQuestion = JMessage.Deserialize<Question>(msg.ObjectJson);
+            ShowSubmitQuestion = true;
         }
 
         public ICommand AnswerCommand { get; set; }
@@ -122,6 +147,10 @@ namespace FamiliadaClientForms.ViewModel
             }
             Answer answer = button.BindingContext as Answer;
             CurrentQuestion.Answers.Remove(answer);
+            if(CurrentQuestion.Answers.Count == 0)
+            {
+                ShowRandQuestion = true;
+            }
             SendMessage("CorrectAnswer", answer);
 
             if(IsRoundOn)
@@ -151,6 +180,8 @@ namespace FamiliadaClientForms.ViewModel
             SendMessage("SubmitQuestion", null);
             IsQuestionSubmitted = true;
             IsRoundOn = true;
+            ShowRandQuestion = false;
+            ShowSubmitQuestion = false;
         }
 
         private void SendMessage(string header, Object obj)
