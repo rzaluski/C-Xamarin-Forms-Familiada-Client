@@ -19,7 +19,7 @@ namespace FamiliadaClientForms.ViewModel
         private bool _isRoundOn;
         private bool _isQuestionSubmitted;
         private bool _isFirstTeamPicked;
-        private ObservableCollection<Team> Teams = new ObservableCollection<Team>();
+        private ObservableCollection<Team> _teams = new ObservableCollection<Team>();
         private Team _selectedTeam;
         public ControlPanelPageViewModel(Page page, TcpClient tcpClient)
         {
@@ -32,6 +32,7 @@ namespace FamiliadaClientForms.ViewModel
             Teams.Add(new Team("Drużyna Lewa", 0));
             Teams.Add(new Team("Drużyna Prawa", 1));
             IsQuestionSubmitted = false;
+            IsFirstTeamPicked = false;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -71,7 +72,7 @@ namespace FamiliadaClientForms.ViewModel
             set
             {
                 _isRoundOn = value;
-                OnPropertyChanged("IsGameOn");
+                OnPropertyChanged("IsRoundOn");
             }
         }
 
@@ -82,17 +83,24 @@ namespace FamiliadaClientForms.ViewModel
             {
                 _isQuestionSubmitted = value;
                 OnPropertyChanged("IsQuestionSubmitted");
+                OnPropertyChanged("ShowPicker");
             }
         }
 
         public bool IsFirstTeamPicked
         {
-            get { return !_isFirstTeamPicked && IsQuestionSubmitted; }
+            get { return _isFirstTeamPicked; }
             set
             {
                 _isFirstTeamPicked = value;
                 OnPropertyChanged("IsFirstTeamPicked");
+                OnPropertyChanged("ShowPicker");
             }
+        }
+
+        public bool ShowPicker
+        {
+            get { return !IsFirstTeamPicked && IsQuestionSubmitted; }
         }
 
         public ICommand RandQuestionCommand { get; set; }
@@ -107,11 +115,16 @@ namespace FamiliadaClientForms.ViewModel
         public ICommand AnswerCommand { get; set; }
         void OnAnswer(Button button)
         {
+            if (!IsFirstTeamPicked)
+            {
+                SendMessage("FirstAnsweringTeam", SelectedTeam.Number);
+                IsFirstTeamPicked = true;
+            }
             Answer answer = button.BindingContext as Answer;
             CurrentQuestion.Answers.Remove(answer);
             SendMessage("CorrectAnswer", answer);
 
-            if(!IsRoundOn)
+            if(IsRoundOn)
             {
                 JMessage msg = ReadMessage();
                 IsRoundOn = JMessage.Deserialize<bool>(msg.ObjectJson);
@@ -121,6 +134,11 @@ namespace FamiliadaClientForms.ViewModel
         public ICommand IncorrectAnswerCommand { get; set; }
         void OnIncorrectAnswer()
         {
+            if(!IsFirstTeamPicked)
+            {
+                SendMessage("FirstAnsweringTeam", SelectedTeam.Number);
+                IsFirstTeamPicked = true;
+            }
             SendMessage("IncorrectAnswer", null);
 
             JMessage msg = ReadMessage();
@@ -131,6 +149,8 @@ namespace FamiliadaClientForms.ViewModel
         void OnSubmitQuestion()
         {
             SendMessage("SubmitQuestion", null);
+            IsQuestionSubmitted = true;
+            IsRoundOn = true;
         }
 
         private void SendMessage(string header, Object obj)
@@ -151,14 +171,14 @@ namespace FamiliadaClientForms.ViewModel
             return JMessage.Deserialize(msgString);
         }
 
-        //public ObservableCollection<Team> Teams
-        //{
-        //    get { return _teams; }
-        //    set
-        //    {
-        //        _teams = value;
-        //        OnPropertyChanged("Teams");
-        //    }
-        //}
+        public ObservableCollection<Team> Teams
+        {
+            get { return _teams; }
+            set
+            {
+                _teams = value;
+                OnPropertyChanged("Teams");
+            }
+        }
     }
 }
