@@ -5,8 +5,8 @@
              x:Name="ControlPanelPage">
     <ContentPage.Content>
         <StackLayout Orientation="Vertical">
-            <Button Text="Losuj pytanie" Command="{Binding RandQuestionCommand}"/>
-            <Button Text="Zatwierdź pytanie" Command="{Binding SubmitQuestionCommand}"/>
+            <Button Text="Losuj pytanie" Command="{Binding RandQuestionCommand}" IsVisible="{Binding ShowRandQuestion}" IsEnabled="{Binding ShowRandQuestion}"/>
+            <Button Text="Zatwierdź pytanie" Command="{Binding SubmitQuestionCommand}" IsVisible="{Binding ShowSubmitQuestion}" IsEnabled="{Binding ShowSubmitQuestion}"/>
             <Label Text="{Binding CurrentQuestion.QuestionText}"/>
             <Picker ItemsSource="{Binding Teams}" SelectedItem="{Binding SelectedTeam}" ItemDisplayBinding="{Binding Name}" IsEnabled="{Binding IsFirstTeamPicked}" IsVisible="{Binding IsFirstTeamPicked}"/>
             <Button Text="Zła odpowiedź" Command="{Binding IncorrectAnswerCommand}" IsEnabled="{Binding IsRoundOn}" IsVisible="{Binding IsRoundOn}"/>
