@@ -31,12 +31,20 @@ namespace FamiliadaClientForms.ViewModel
             AnswerCommand = new Command<Button>(OnAnswer);
             SubmitQuestionCommand = new Command(OnSubmitQuestion);
             IncorrectAnswerCommand = new Command(OnIncorrectAnswer);
+            TeamPickerSelectedIndexChanged = new Command(OnTeamPickerSelectedIndexChanged);
             Teams.Add(new Team("Drużyna Lewa", 0));
             Teams.Add(new Team("Drużyna Prawa", 1));
+            SetStartProperties();
+        }
+
+        private void SetStartProperties()
+        {
             IsQuestionSubmitted = false;
             IsFirstTeamPicked = false;
             ShowRandQuestion = true;
             ShowSubmitQuestion = false;
+            CurrentQuestion = null;
+            SelectedTeam = null;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -99,6 +107,7 @@ namespace FamiliadaClientForms.ViewModel
                 _isFirstTeamPicked = value;
                 OnPropertyChanged("IsFirstTeamPicked");
                 OnPropertyChanged("ShowPicker");
+                OnPropertyChanged("IsAnswerEnabled");
             }
         }
 
@@ -127,6 +136,11 @@ namespace FamiliadaClientForms.ViewModel
             }
         }
 
+        public bool IsAnswerEnabled
+        {
+            get { return IsQuestionSubmitted && SelectedTeam != null; }
+        }
+
         public ICommand RandQuestionCommand { get; set; }
         void OnRandQuestion()
         {
@@ -149,7 +163,7 @@ namespace FamiliadaClientForms.ViewModel
             CurrentQuestion.Answers.Remove(answer);
             if(CurrentQuestion.Answers.Count == 0)
             {
-                ShowRandQuestion = true;
+                SetStartProperties();
             }
             SendMessage("CorrectAnswer", answer);
 
@@ -182,6 +196,12 @@ namespace FamiliadaClientForms.ViewModel
             IsRoundOn = true;
             ShowRandQuestion = false;
             ShowSubmitQuestion = false;
+        }
+
+        public ICommand TeamPickerSelectedIndexChanged { get; set; }
+        void OnTeamPickerSelectedIndexChanged()
+        {
+            OnPropertyChanged("IsAnswerEnabled");
         }
 
         private void SendMessage(string header, Object obj)
