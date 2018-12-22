@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:FamiliadaClientForms"
              x:Class="FamiliadaClientForms.MainPage">
 
-    <StackLayout VerticalOptions="Center" HorizontalOptions="FillAndExpand">
+    <StackLayout VerticalOptions="Center" HorizontalOptions="FillAndExpand" Padding="10,0,10,0">
         <StackLayout Orientation="Horizontal">
             <Label Text="IP:" FontSize="Medium"/>
             <Entry x:Name="entryIP" HorizontalOptions="FillAndExpand" Keyboard="Numeric" Text="{Binding IP, Mode=TwoWay}">

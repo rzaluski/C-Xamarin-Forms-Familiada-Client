@@ -41,8 +41,8 @@ namespace FamiliadaClientForms.ViewModel
         {
             IsQuestionSubmitted = false;
             IsFirstTeamPicked = false;
-            ShowRandQuestion = true;
-            ShowSubmitQuestion = false;
+            IsRandQuestionEnabled = true;
+            IsSubmitQuestionEnabled = false;
             CurrentQuestion = null;
             SelectedTeam = null;
         }
@@ -116,23 +116,23 @@ namespace FamiliadaClientForms.ViewModel
             get { return !IsFirstTeamPicked && IsQuestionSubmitted; }
         }
 
-        public bool ShowRandQuestion
+        public bool IsRandQuestionEnabled
         {
             get { return _showRandQuestion; }
             set
             {
                 _showRandQuestion = value;
-                OnPropertyChanged("ShowRandQuestion");
+                OnPropertyChanged("IsRandQuestionEnabled");
             }
         }
 
-        public bool ShowSubmitQuestion
+        public bool IsSubmitQuestionEnabled
         {
             get { return _showSubmitQuestion; }
             set
             {
                 _showSubmitQuestion = value;
-                OnPropertyChanged("ShowSubmitQuestion");
+                OnPropertyChanged("IsSubmitQuestionEnabled");
             }
         }
 
@@ -148,7 +148,7 @@ namespace FamiliadaClientForms.ViewModel
 
             JMessage msg = ReadMessage();
             CurrentQuestion = JMessage.Deserialize<Question>(msg.ObjectJson);
-            ShowSubmitQuestion = true;
+            IsSubmitQuestionEnabled = true;
         }
 
         public ICommand AnswerCommand { get; set; }
@@ -158,6 +158,11 @@ namespace FamiliadaClientForms.ViewModel
             {
                 SendMessage("FirstAnsweringTeam", SelectedTeam.Number);
                 IsFirstTeamPicked = true;
+                JMessage jMessage = ReadMessage();
+                if (jMessage.MessageType != "Confirm")
+                {
+                    throw new Exception("Wrong message type. Expected: 'Confirm' got: '" + jMessage.MessageType + "'");
+                }
             }
             Answer answer = button.BindingContext as Answer;
             CurrentQuestion.Answers.Remove(answer);
@@ -181,6 +186,11 @@ namespace FamiliadaClientForms.ViewModel
             {
                 SendMessage("FirstAnsweringTeam", SelectedTeam.Number);
                 IsFirstTeamPicked = true;
+                JMessage jMessage = ReadMessage();
+                if(jMessage.MessageType != "Confirm")
+                {
+                    throw new Exception("Wrong message type. Expected: 'Confirm' got: '" + jMessage.MessageType + "'");
+                }
             }
             SendMessage("IncorrectAnswer", null);
 
@@ -194,8 +204,8 @@ namespace FamiliadaClientForms.ViewModel
             SendMessage("SubmitQuestion", null);
             IsQuestionSubmitted = true;
             IsRoundOn = true;
-            ShowRandQuestion = false;
-            ShowSubmitQuestion = false;
+            IsRandQuestionEnabled = false;
+            IsSubmitQuestionEnabled = false;
         }
 
         public ICommand TeamPickerSelectedIndexChanged { get; set; }

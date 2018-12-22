@@ -6,15 +6,15 @@
              x:Name="ControlPanelPage">
     <ContentPage.Content>
         <StackLayout Orientation="Vertical">
-            <Button Text="Losuj pytanie" Command="{Binding RandQuestionCommand}" IsEnabled="{Binding ShowRandQuestion}"/>
-            <Button Text="Zatwierdź pytanie" Command="{Binding SubmitQuestionCommand}" IsEnabled="{Binding ShowSubmitQuestion}"/>
-            <Label Text="{Binding CurrentQuestion.QuestionText}"/>
-            <Picker ItemsSource="{Binding Teams}" SelectedItem="{Binding SelectedTeam, Mode=TwoWay}" ItemDisplayBinding="{Binding Name}" IsEnabled="{Binding ShowPicker}" IsVisible="{Binding ShowPicker}" Title="Wybierz rozpoczynającą drużynę">
+            <Button Text="Losuj pytanie" Command="{Binding RandQuestionCommand}" IsEnabled="{Binding IsRandQuestionEnabled}" Style="{StaticResource button}"/>
+            <Button Text="Zatwierdź pytanie" Command="{Binding SubmitQuestionCommand}" IsEnabled="{Binding IsSubmitQuestionEnabled}" Style="{StaticResource button}"/>
+            <Label Text="{Binding CurrentQuestion.QuestionText}" Margin="10,0,10,0" FontSize="20" HorizontalTextAlignment="Center" Font="Bold"/>
+            <Picker Margin="10,0,10,0" ItemsSource="{Binding Teams}" SelectedItem="{Binding SelectedTeam, Mode=TwoWay}" ItemDisplayBinding="{Binding Name}" IsEnabled="{Binding ShowPicker}" IsVisible="{Binding ShowPicker}" Title="Wybierz rozpoczynającą drużynę">
                 <Picker.Behaviors>
                     <local:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding TeamPickerSelectedIndexChanged}"/>
                 </Picker.Behaviors>
             </Picker>
-            <Button Text="Zła odpowiedź" Command="{Binding IncorrectAnswerCommand}" IsEnabled="{Binding IsAnswerEnabled}" IsVisible="{Binding IsRoundOn}"/>
+            <Button Text="Zła odpowiedź" Command="{Binding IncorrectAnswerCommand}" IsEnabled="{Binding IsAnswerEnabled}" IsVisible="{Binding IsRoundOn}" Style="{StaticResource button}"/>
             <ListView x:Name="listViewAnswers" ItemsSource="{Binding CurrentQuestion.Answers}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -22,7 +22,8 @@
                             <Button x:Name="answerButton" Text="{Binding AnswerText}" 
                                     Command="{Binding Path=BindingContext.AnswerCommand, Source={x:Reference Name=listViewAnswers}}" 
                                     CommandParameter="{x:Reference answerButton}" 
-                                    IsEnabled="{Binding Path=BindingContext.IsAnswerEnabled, Source={x:Reference Name=listViewAnswers}}"/>
+                                    IsEnabled="{Binding Path=BindingContext.IsAnswerEnabled, Source={x:Reference Name=listViewAnswers}}"
+                                    Style="{StaticResource button}"/>
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
