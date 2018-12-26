@@ -217,9 +217,9 @@ namespace FamiliadaClientForms.ViewModel
         private void SendMessage(string header, Object obj)
         {
             Stream stream = _tcpClient.GetStream();
-            ASCIIEncoding asen = new ASCIIEncoding();
+            UTF8Encoding utf8 = new UTF8Encoding();
             string msgString = JMessage.CreateMessage(header, obj);
-            byte[] b = asen.GetBytes(msgString);
+            byte[] b = utf8.GetBytes(msgString);
             stream.Write(b, 0, b.Length);
         }
 
@@ -228,7 +228,7 @@ namespace FamiliadaClientForms.ViewModel
             Stream stream = _tcpClient.GetStream();
             byte[] bb = new byte[1000];
             int k = stream.Read(bb, 0, 1000);
-            string msgString = System.Text.Encoding.ASCII.GetString(bb, 0, k);
+            string msgString = System.Text.Encoding.UTF8.GetString(bb, 0, k);
             return JMessage.Deserialize(msgString);
         }
 
