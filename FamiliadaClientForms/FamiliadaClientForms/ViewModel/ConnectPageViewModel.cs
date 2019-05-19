@@ -62,7 +62,12 @@ namespace FamiliadaClientForms
                 if (!int.TryParse(Port, out int port)) throw new Exception("Nieprawidłowy format portu");
 
                 TcpClient tcpClient = new TcpClient();
-                tcpClient.Connect(IP, port);
+                var result = tcpClient.BeginConnect(IP, port, null, null);
+                var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(3));
+                if (!success)
+                {
+                    throw new Exception("Failed to connect.");
+                }
                 _navigation.PushModalAsync(new ControlPanelPage(tcpClient));
                 //tcpClient.Close();
             }

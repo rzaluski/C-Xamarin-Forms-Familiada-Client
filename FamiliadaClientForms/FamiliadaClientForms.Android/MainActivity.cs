@@ -9,7 +9,7 @@ using Android.OS;
 
 namespace FamiliadaClientForms.Droid
 {
-    [Activity(Label = "FamiliadaClientForms", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "Familiada", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         protected override void OnCreate(Bundle bundle)
@@ -22,7 +22,10 @@ namespace FamiliadaClientForms.Droid
             global::Xamarin.Forms.Forms.Init(this, bundle);
             LoadApplication(new App());
         }
-        
+        public override void OnBackPressed()
+        {
+            return;
+        }
 
     }
 }
